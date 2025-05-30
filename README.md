@@ -1,128 +1,45 @@
-# ☀️ Solar Industry AI Assistant
+# ☀️ Solar Industry AI Assistant (Fixed Version)
 
-A **Streamlit-based** AI assistant that analyzes rooftop images to assess the potential for solar panel installation and calculates ROI for the Indian market.
+A Streamlit app that analyzes rooftop images to provide solar panel recommendations and ROI insights for India.
 
----
+## 🌐 How It Works
+1. Upload a satellite or aerial image of a rooftop.
+2. The AI analyzes usable surface area and estimates panel fit.
+3. ROI is calculated with Indian costs and government incentives.
 
-## 🧠 How It Works
+## 🔧 What's Fixed
+- ✅ Updated to use OpenRouter API with working vision model
+- ✅ Comprehensive error handling for API failures
+- ✅ Fixed ROI calculation KeyError
+- ✅ Better JSON parsing from AI responses
+- ✅ Graceful handling of failed analyses
 
-1. Upload a satellite/aerial image of a rooftop.
-2. The app uses a **vision-capable LLM (Google Gemini)** to:
-   - Identify usable rooftop area.
-   - Recommend how many 350W solar panels can be installed.
-3. Calculates:
-   - Estimated energy output.
-   - ROI using Indian market rates and government incentives.
+## 🔐 Setup API Key
 
----
+### For Hugging Face Spaces:
+1. Go to your Space → ⚙ Settings → Secrets
+2. Add: `OPENROUTER_API_KEY`: `sk-or-v1-...`
 
-## ⚙️ Local Setup Instructions
-
-### ✅ Prerequisites
-
-- Python 3.8+
-- API Key from Google Gemini
-- Recommended: virtual environment
-
-### 🗂️ Step-by-Step Setup
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/yourusername/solar-ai-assistant.git
-   cd solar-ai-assistant
-   ```
-
-2. **Create and activate a virtual environment**:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows use: venv\Scripts\activate
-   ```
-
-3. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Set up your environment variable**:
-
-   Create a `.env` file in the root directory and add:
-   ```env
-   GEMINI_API_KEY=your_gemini_key_here
-   ```
-
-   Or export manually:
-   ```bash
-   export GEMINI_API_KEY=your_gemini_key_here
-   ```
-
-5. **Run the app**:
-   ```bash
-   streamlit run app.py
-   ```
-
----
-
-## 📁 File Structure
-
-```
-.
-├── app.py                  # Streamlit UI
-├── vision_analysis.py      # Google Gemini Vision API integration
-├── roi_calculator.py       # ROI calculation logic
-├── requirements.txt        # Required Python packages
-├── .env                    # API key (excluded from version control)
-└── README.md               # Project documentation
+### For Local Development:
+```bash
+export OPENROUTER_API_KEY="sk-or-v1-your-key-here"
 ```
 
----
+## 🏁 Run Locally
+```bash
+pip install -r requirements.txt
+streamlit run app.py
+```
 
-## 🧪 Example Use Case
+## 🔑 Get API Key
+1. Visit [OpenRouter.ai](https://openrouter.ai)
+2. Sign up for a free account
+3. Generate an API key
+4. Set it as environment variable
 
-1. Upload a rooftop image (e.g., `rooftop.jpg`)
-2. App returns:
-   ```json
-   {
-     "usable_area_m2": 60,
-     "recommended_panels": 30
-   }
-   ```
-3. ROI Output:
-   - Estimated Output: 17,000 kWh/year
-   - Payback Period: 4.5 years
-   - Total Cost: ₹4,72,500
-   - Incentives: ₹1,41,750
-   - Net Cost: ₹3,30,750
-
----
-
-## 🧩 Features
-
-- 🧠 Vision AI analysis (Google Gemini)
-- 🏠 Rooftop panel recommendations
-- 💰 Detailed ROI & cost breakdown
-- 🇮🇳 Market-specific calculations for India
-- 🧯 Graceful error handling and validation
-
----
-
-## 📌 Future Improvements
-
-- Switch to Gemini-native API (when public)
-- Add performance metrics on detection accuracy
-- Include support for CSV reports/export
-- Compare ROI across Indian states with tariff data
-- Extend support to commercial buildings
-
----
-
-## 🛑 Removed/Excluded
-
-- ❌ Deployment (used locally)
-- ❌ Gradio (replaced by Streamlit)
-- ❌ OpenRouter and non-Gemini models
-
----
-
-## 📄 License
-
-MIT License (or as applicable)
+## 📋 Features
+- 🔍 AI-powered rooftop analysis
+- 💰 ROI calculation with Indian market rates
+- 🏛️ Government subsidy calculations
+- 📊 Detailed cost breakdown
+- ⚡ Error handling and validation

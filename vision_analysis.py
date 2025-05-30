@@ -3,35 +3,29 @@ import json
 import requests
 import os
 
-API_KEY = os.getenv("OPENROUTER_API_KEY")
-# Updated to use a working OpenRouter model for vision tasks
-MODEL_ID = "openai/gpt-4o-mini"
+API_KEY = os.getenv("GOOGLE_API_KEY")
+# Updated Google Gemini model (replaces deprecated gemini-pro-vision)
+MODEL_ID = "gemini-1.5-flash"
 
 def analyze_rooftop(image_bytes):
     if not API_KEY:
         return {
-            "error": "OPENROUTER_API_KEY environment variable not set",
-            "details": "Please set your OpenRouter API key in the environment variables"
+            "error": "GOOGLE_API_KEY environment variable not set",
+            "details": "Please set your Google API key in the environment variables"
         }
     
     base64_image = base64.b64encode(image_bytes).decode("utf-8")
 
     headers = {
-        "Authorization": f"Bearer {API_KEY}",
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://huggingface.co/spaces",  # Required for some OpenRouter models
-        "X-Title": "Solar AI Assistant"  # Optional but recommended
+        "Content-Type": "application/json"
     }
 
+    # Google Gemini API request format
     data = {
-        "model": MODEL_ID,
-        "messages": [
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": """Analyze this rooftop image and estimate:
+        "contents": [{
+            "parts": [
+                {
+                    "text": """Analyze this rooftop image and estimate:
 1. Usable rooftop area in square meters (excluding chimneys, vents, shadows)
 2. Number of 350W solar panels that can be installed (each panel is ~2m²)
 
@@ -40,23 +34,30 @@ Respond ONLY with valid JSON in this exact format:
   "usable_area_m2": <number>,
   "recommended_panels": <number>
 }"""
-                    },
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": f"data:image/jpeg;base64,{base64_image}"
-                        }
+                },
+                {
+                    "inline_data": {
+                        "mime_type": "image/jpeg",
+                        "data": base64_image
                     }
-                ]
-            }
-        ],
-        "max_tokens": 300,
-        "temperature": 0.1
+                }
+            ]
+        }],
+        "generationConfig": {
+            "temperature": 0.1,
+            "topK": 32,
+            "topP": 1,
+            "maxOutputTokens": 300,
+            "stopSequences": []
+        }
     }
 
     try:
+        # Updated Google Gemini API endpoint for v1beta models
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL_ID}:generateContent?key={API_KEY}"
+        
         response = requests.post(
-            "https://openrouter.ai/api/v1/chat/completions",
+            url,
             headers=headers,
             json=data,
             timeout=30
@@ -66,19 +67,34 @@ Respond ONLY with valid JSON in this exact format:
             return {
                 "error": f"API returned status code {response.status_code}",
                 "raw_response": response.text,
-                "details": f"Check your API key and model availability"
+                "details": f"Check your API key and quota limits"
             }
 
         result = response.json()
         
+        # Check for API errors
         if 'error' in result:
             return {
-                "error": "API Error",
+                "error": "Google API Error",
                 "details": result['error'].get('message', 'Unknown API error'),
                 "raw_response": response.text
             }
         
-        content = result['choices'][0]['message']['content'].strip()
+        # Extract content from Google's response format
+        if 'candidates' not in result or not result['candidates']:
+            return {
+                "error": "No response candidates from API",
+                "raw_response": response.text
+            }
+        
+        candidate = result['candidates'][0]
+        if 'content' not in candidate or 'parts' not in candidate['content']:
+            return {
+                "error": "Invalid response structure from API",
+                "raw_response": response.text
+            }
+        
+        content = candidate['content']['parts'][0]['text'].strip()
 
         try:
             # Try to extract JSON from response (in case there's extra text)
