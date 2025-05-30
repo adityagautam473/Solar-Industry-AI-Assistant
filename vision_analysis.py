@@ -4,7 +4,7 @@ import requests
 import os
 
 API_KEY = os.getenv("GOOGLE_API_KEY")
-# Updated Google Gemini model (replaces deprecated gemini-pro-vision)
+#Google Gemini model 
 MODEL_ID = "gemini-1.5-flash"
 
 def analyze_rooftop(image_bytes):
