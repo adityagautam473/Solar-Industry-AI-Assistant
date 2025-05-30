@@ -23,13 +23,14 @@ A **Streamlit-based** AI assistant that analyzes rooftop images to assess the po
 - Python 3.8+
 - API Key from Google Gemini
 - Recommended: virtual environment
+- Code Editor like Visual Studio Code
 
 ### 🗂️ Step-by-Step Setup
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/solar-ai-assistant.git
-   cd solar-ai-assistant
+   git clone https://github.com/adityagautam473/Solar-Industry-AI-Assistant.git
+   cd Solar-Industry-AI-Assistant
    ```
 
 2. **Create and activate a virtual environment**:
